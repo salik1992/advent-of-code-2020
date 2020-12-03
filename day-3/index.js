@@ -1,4 +1,4 @@
-const input = require('./inputs/3');
+const input = require('./input');
 
 const TREE = '#';
 

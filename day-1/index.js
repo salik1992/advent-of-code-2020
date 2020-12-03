@@ -1,4 +1,4 @@
-const input = require('./inputs/1');
+const input = require('./input');
 
 const firstSolution = () => {
     for (let i = 0; i < input.length; i++) {

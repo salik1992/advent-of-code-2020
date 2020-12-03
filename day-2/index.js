@@ -1,4 +1,4 @@
-const input = require('./inputs/2');
+const input = require('./input');
 
 const parseLine = (line) => {
     const [counts, letterWithCollon, password] = line.split(' ');
