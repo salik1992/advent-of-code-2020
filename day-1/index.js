@@ -1,4 +1,6 @@
 const input = require('./input');
+const getSum = require('../utils/getSum');
+const getProduct = require('../utils/getProduct');
 
 const firstSolution = () => {
     for (let i = 0; i < input.length; i++) {
@@ -14,9 +16,6 @@ const firstSolution = () => {
 };
 
 const refactoredSolution = (numbersCount, sum) => {
-    const getSum = (arr) => arr.reduce((acc, value) => acc + value, 0);
-    const getProduct = (arr) => arr.reduce((acc, value) => acc * value, 1);
-
     const pointers = (() => {
         const arr = [];
         let i = 0;
