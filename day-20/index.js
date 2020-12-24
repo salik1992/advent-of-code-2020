@@ -48,7 +48,10 @@ console.log(getProduct(corners.map(({ id }) => id)));
 // part 2
 
 const topLeftCorner = corners.find(({ borders }) => (
-    borderToId[borders[0]].length === 1 && borderToId[borders[2]].length === 1
+    borderToId[borders[0]] &&
+    borderToId[borders[0]].length === 1 &&
+    borderToId[borders[2]] &&
+    borderToId[borders[2]].length === 1
 ));
 
 const size = Math.sqrt(Object.keys(tiles).length);
@@ -198,25 +201,33 @@ const replaceTextAtIndex = (string, replacement, replaceAt) => (
 );
 
 const findAndMarkMonsters = (image) => {
-    const MATCH_2 = /[#O]....[#O][#O]....[#O][#O]....[#O][#O][#O]/g;
-    const MATCH_3 = /.[#O]..[#O]..[#O]..[#O]..[#O]..[#O].../g;
+    const MATCH = /#....##....##....###/g;
     const REPLACE_1 = '..................O.';
     const REPLACE_2 = 'O....OO....OO....OOO';
     const REPLACE_3 = '.O..O..O..O..O..O...';
     const lines = image.split('\n');
     lines.forEach((line, lineIndex) => {
-        if (lineIndex < 2) return;
-        const indexes2 = [...lines[lineIndex - 1].matchAll(MATCH_2)].map(({ index }) => index);
-        if (indexes2.length) {
-            const indexes3 = [...line.matchAll(MATCH_3)].map(({ index }) => index)
-                .filter(i => indexes2.indexOf(i) !== -1);
-            indexes3.forEach((replaceAt) => {
-                if (lines[lineIndex - 2][replaceAt + 18] !== '#') return;
-                lines[lineIndex - 2] = replaceTextAtIndex(lines[lineIndex - 2], REPLACE_1, replaceAt);
-                lines[lineIndex - 1] = replaceTextAtIndex(lines[lineIndex - 1], REPLACE_2, replaceAt);
-                lines[lineIndex] = replaceTextAtIndex(lines[lineIndex], REPLACE_3, replaceAt);
-            });
+        if (lineIndex === 0 || lineIndex === lines.length - 1) return;
+        const indexes = [];
+        MATCH.lastIndex = 0;
+        let next = MATCH.exec(line);
+        while (next) {
+            indexes.push(next.index);
+            MATCH.lastIndex = next.index + 1;
+            next = MATCH.exec(line);
         }
+        indexes.forEach((index) => {
+            if (lines[lineIndex - 1][index + 18] !== '#') return;
+            if (lines[lineIndex + 1][index + 1] !== '#') return;
+            if (lines[lineIndex + 1][index + 4] !== '#') return;
+            if (lines[lineIndex + 1][index + 7] !== '#') return;
+            if (lines[lineIndex + 1][index + 10] !== '#') return;
+            if (lines[lineIndex + 1][index + 13] !== '#') return;
+            if (lines[lineIndex + 1][index + 16] !== '#') return;
+            lines[lineIndex - 1] = replaceTextAtIndex(lines[lineIndex - 1], REPLACE_1, index);
+            lines[lineIndex] = replaceTextAtIndex(lines[lineIndex], REPLACE_2, index);
+            lines[lineIndex + 1] = replaceTextAtIndex(lines[lineIndex + 1], REPLACE_3, index);
+        });
     });
     return lines.join('\n');
 };
@@ -239,7 +250,5 @@ currentImage = rotateImageRight(currentImage);
 currentImage = findAndMarkMonsters(currentImage);
 currentImage = rotateImageRight(currentImage);
 currentImage = findAndMarkMonsters(currentImage);
-
-console.log(currentImage);
 
 console.log(currentImage.replace(/\.|O|\n/gm, '').length);
